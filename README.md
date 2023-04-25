@@ -1,44 +1,60 @@
-*This repository acts as a template for all of Oracle’s GitHub repositories. It contains information about the guidelines for those repositories. All files and sections contained in this template are mandatory, and a GitHub app ensures alignment with these guidelines. To get started with a new repository, replace the italic paragraphs with the respective text for your project.*
+# About Augmented & Virtual Reality Sample
 
-# Project name
+This repository holds the sample source code for an iOS app which displays 3D models in Augmented Reality, and Virtual 360° images managed in Oracle Content Management.  This is a companion app to a custom-built Oracle Content Management site.
 
-*Describe your project's features, functionality and target audience*
+Please see the complete [solution article](https://docs.oracle.com/en/solutions/develop-marketing-website/set-cafe-supremo-marketing-website1.html).
 
 ## Installation
 
-*Provide detailed step-by-step installation instructions*
+Source code may be obtained from Github:
 
-## Documentation
+```
+git clone https://github.com/oracle-samples/oce-ios-arvr-sample
+```
 
-*Developer-oriented documentation can be published on GitHub, but all product documentation must be published on <https://docs.oracle.com>*
+## Running the project
 
-## Examples
+Open the project file, `ARDemo.xcodeproj`.
 
-*Describe any included examples or provide a link to a demo/tutorial*
+Select an appropriate iOS target and click the Run button.
 
-## Help
+### On-Device
+When you run on-device, the application is intended to be used by scanning an on-screen QR code from an Oracle Content Management web page. The instance URL and content identifiers are passed along as part of QR code, so no additional configuration is necessary.
 
-*Inform users on where to get help or how to receive official support from Oracle (if applicable)*
+### Simulator
+When you run on the simulator, the application contains two additional buttons to preview a 3D mug and view a 360 degree panorama image. These buttons are useful because there is no camera available. However, since you cannot scan a QR code, you must supply some parameters so that data may be retrieved from your Oracle Content Management instance.
+
+Open the file `DemoParameters.swift` and provide values that correspond to your Oracle Content Management instance and published assets:
+
+```json 
+{
+    "scheme": "https",
+    "host": "ocereferencegen2-oce0004.cec.ocp.oraclecloud.com",
+    "channelToken": "b2f5a8a18bbc42bb949885fdaf1f43ee",
+    "mugAssetID": "CORE8D5D8FD0FF8E4E34A4E4542C6D971650",
+    "mugDecalID": "CONTAC2173A2CF7E4D058670FDA0AFAF666E",
+    "panoramaAssetID": "CORE692BB127E7FD4AD98010AA6CEA5416B1"
+}
+```
+
+- `scheme` - will always be "https"
+- `host` - the host (and optional port) for your Content Management instace
+- `channelToken` - the token associated with the location to which assets have been published
+- `mugAssetID` - the identifier of structured content representing the coffee mug
+- `mugDecalID` - the identifier of the image asset that will be applied to the mug 
+- `panoramaAssetID`  - the identifier of the structured content representing the 360 degree panorama to display
 
 ## Contributing
 
-*If your project has specific contribution requirements, update the CONTRIBUTING.md file to ensure those requirements are clearly explained*
-
-This project welcomes contributions from the community. Before submitting a pull request, please [review our contribution guide](./CONTRIBUTING.md)
+This project welcomes contributions from the community. Before submitting a pull
+request, please [review our contribution guide](./CONTRIBUTING.md).
 
 ## Security
 
-Please consult the [security guide](./SECURITY.md) for our responsible security vulnerability disclosure process
+Please consult the [security guide](./SECURITY.md) for our responsible security
+vulnerability disclosure process.
 
 ## License
 
-*The correct copyright notice format for both documentation and software is*
-    "Copyright (c) [year,] year Oracle and/or its affiliates."
-*You must include the year the content was first released (on any platform) and the most recent year in which it was revised*
-
-Copyright (c) 2023 Oracle and/or its affiliates.
-
-*Replace this statement if your project is not licensed under the UPL*
-
-Released under the Universal Permissive License v1.0 as shown at
-<https://oss.oracle.com/licenses/upl/>.
+Copyright (c) 2023 Oracle and/or its affiliates and released under the
+[Universal Permissive License (UPL)](https://oss.oracle.com/licenses/upl/), Version 1.0
