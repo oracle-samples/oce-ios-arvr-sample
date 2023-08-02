@@ -31,6 +31,7 @@ internal enum MugAction {
     case display
     case performCustomization(Entity)
     case fail(Error)
+    case reset([URLQueryItem]?)
 }
 
 /**
@@ -98,7 +99,7 @@ internal class MugModel: ObservableObject {
         self.cacheProvider = cacheProvider ?? ARDemoFileCache.instance
        
         do {
-            self.customizableParameters = try  MugURLParameters.init(queryItems: queryItems)
+            self.customizableParameters = try MugURLParameters.init(queryItems: queryItems)
             
         } catch {
             self.send(.fail(error))
@@ -135,7 +136,24 @@ internal class MugModel: ObservableObject {
             self.state = .customizing
             self.usdz = entity
             self.performCustomization()
+            
+        case .reset(let queryItems):
+            do {
+                self.customizableParameters = try MugURLParameters.init(queryItems: queryItems)
+                self.send(.download)
+                
+            } catch {
+                self.send(.fail(error))
+            }
         }
+    }
+    
+    internal func hasChanged(queryItems: [URLQueryItem]?) -> Bool {
+        guard let newParameters = try? MugURLParameters(queryItems: queryItems) else {
+            return false
+        }
+        
+        return self.customizableParameters != newParameters
     }
 }
 

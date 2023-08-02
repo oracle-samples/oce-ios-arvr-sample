@@ -8,15 +8,19 @@ import Combine
 import ARDemoCommon
 
 public struct PanoramaView: View {
+    @Environment(\.scenePhase) var scenePhase
     
     @StateObject var model: PanoramaModel
     @State var currentSelection: String = "bar"
     @State var showMenu = false
     
+    private var queryItems: [URLQueryItem]?
+    
     var completion: (() -> Void)?
 
     public init(queryItems: [URLQueryItem]?, completion: @escaping () -> Void) {
         _model = StateObject(wrappedValue: PanoramaModel(queryItems: queryItems))
+        self.queryItems = queryItems
         self.completion = completion
     }
     
@@ -53,6 +57,13 @@ public struct PanoramaView: View {
             self.model.send(.download)
         }
         .navigationBarHidden(true)
+        .onChange(of: scenePhase) { newValue in
+            if newValue == .active {
+                if self.model.hasChanged(queryItems: self.queryItems) {
+                    self.model.send(.reset(queryItems))
+                }
+            }
+        }
     
     }
 
@@ -75,9 +86,6 @@ public struct PanoramaView: View {
                 
                 PanoramaTitle(title: self.model.currentItem.title)
                     .frame(maxHeight: 50)
-                    .onTapGesture {
-                        self.model.send(.reset)
-                    }
             }
 
         }

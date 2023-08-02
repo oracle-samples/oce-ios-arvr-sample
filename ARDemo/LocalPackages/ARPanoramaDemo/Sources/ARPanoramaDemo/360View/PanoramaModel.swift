@@ -12,16 +12,15 @@ import ARDemoCommon
  */
 enum PanoramaModelAction {
     case download
-    case reset
+    case reset([URLQueryItem]?)
     case failure(Error)
-    case showNext
-    case showPrevious
+    case fetchCurrent
     case displayCurrent
     case close
     case displayFetchingNextSpinner
     case newLocation(Asset)
     case buildExperienceItems(Asset)
-    case updateData(String, [PanoramaExperienceItem])
+    case updateData(String, PanoramaExperienceItem)
 }
 
 /**
@@ -50,7 +49,7 @@ class PanoramaModel: ObservableObject {
     @Published var currentPanoramaImage: URL?
     
     var currentItem: PanoramaExperienceItem {
-        self.data.items[currentIndex]
+        self.data.item
     }
     
     /// Action to be called when the view closes
@@ -111,7 +110,7 @@ class PanoramaModel: ObservableObject {
             
         case .displayCurrent:
             self.fetchingNext = false
-            guard let url = self.data.items[self.currentIndex].url else {
+            guard let url = self.data.item.url else {
                 self.state = .error(PanoramaError.invalidCacheURL)
                 return
             }
@@ -120,18 +119,14 @@ class PanoramaModel: ObservableObject {
                 self.currentPanoramaImage = url
                 self.state = .done
             }
-           
-        case .showNext:
-            self.fetchNext()
             
-        case .showPrevious:
-            self.fetchPrevious()
+        case .fetchCurrent:
+            self.fetchCurrent()
             
         case .close:
             self.fetchingNext = false
             self.panoramaParameters = nil
             self.currentPanoramaImage = nil
-            self.data?.items.removeAll()
             self.data = nil
             self.state = .close
             self.onCloseAction?()
@@ -143,19 +138,24 @@ class PanoramaModel: ObservableObject {
             self.state = .downloading
             self.fetchingNext = false
             self.panoramaParameters = self.create(parameters: panoramaParameters, assetId: asset.identifier)
-            self.data.items.removeAll()
             self.currentIndex = -1
             self.fetch()
             
-        case let .updateData(name, experienceItems):
-            self.data = PanoramaExperience(location: name, items: experienceItems)
+        case let .updateData(name, experienceItem):
+            self.data = PanoramaExperience(location: name, item: experienceItem)
             self.currentLocationName = name
             
         case .buildExperienceItems(let asset):
             self.buildExperienceItems(from: asset)
             
-        default:
-            break
+        case .reset(let queryItems):
+            do {
+                self.panoramaParameters = try PanoramaURLParameters.init(queryItems: queryItems)
+                self.send(.download)
+                
+            } catch {
+                self.send(.failure(error))
+            }
         }
     }
     
@@ -169,34 +169,34 @@ class PanoramaModel: ObservableObject {
  
        let location = asset.name
         
-        guard let panoramaImages = try? asset.customField("360Scenes") as [Asset] else {
+        guard let panoramaImage = try? asset.customField("360Scene") as Asset else {
             self.send(.failure(PanoramaError.noImagesAvailable))
             return
         }
-        
-        guard !panoramaImages.isEmpty else {
-            self.send(.failure(PanoramaError.noImagesAvailable))
-            return
-        }
-        
-        let experienceItems = panoramaImages.map { asset -> PanoramaExperienceItem in
-            
-            let assetTitle = try? asset.customField("title") as String
+
+        let assetTitle = try? panoramaImage.customField("title") as String
     
-            let horizontalAngle = (try? asset.customField("horizontalAngle") as Double) ?? 0.0
-            let fieldOfView = (try? asset.customField("fieldOfView") as Int) ?? 0   
+        let horizontalAngle = (try? panoramaImage.customField("horizontalAngle") as Double) ?? 0.0
+        let fieldOfView = (try? panoramaImage.customField("fieldOfView") as Int) ?? 0
             
-            return PanoramaExperienceItem(
-                identifier: asset.identifier,
+        let experienceItem = PanoramaExperienceItem(
+                identifier: panoramaImage.identifier,
                 title: assetTitle,
                 horizontalAngle: horizontalAngle,
                 fieldOfView: fieldOfView,
                 url: nil)
+        
+        self.send(.updateData(location, experienceItem))
+        
+        self.send(.fetchCurrent)
+    }
+    
+    internal func hasChanged(queryItems: [URLQueryItem]?) -> Bool {
+        guard let newParameters = try? PanoramaURLParameters(queryItems: queryItems) else {
+            return false
         }
         
-        self.send(.updateData(location, experienceItems))
-        
-        self.send(.showNext)
+        return self.panoramaParameters != newParameters
     }
 
 }
@@ -248,24 +248,7 @@ extension PanoramaModel {
             })
     }
     
-    
-    func fetchNext() {
-        self.currentIndex = abs((self.currentIndex + 1) % self.data.items.count)
-        self.fetchCurrent()
-        
-    }
-    
-    func fetchPrevious() {
-        self.currentIndex = abs((self.currentIndex + self.data.items.count - 1) % self.data.items.count)
-        self.fetchCurrent()
-    }
-    
     func fetchCurrent() {
-        
-        if self.currentIndex < 0 || self.currentIndex > (self.data.items.count - 1) {
-            self.send(.failure(PanoramaError.invalidIndex))
-            return
-        }
         
         guard currentItem.url == nil else {
             self.send(.displayCurrent)
@@ -274,7 +257,7 @@ extension PanoramaModel {
         
         self.send(.displayFetchingNextSpinner)
         
-        let identifier = self.data.items[self.currentIndex].identifier
+        let identifier = self.data.item.identifier
         
         var c: AnyCancellable?
         c = self.networking
@@ -294,7 +277,7 @@ extension PanoramaModel {
                 
                 self.cancellables.removeAll { $0 === c }
             }, receiveValue: { downloadResult in
-                self.data.items[self.currentIndex].url = downloadResult.result
+                self.data.item.url = downloadResult.result
                 
                 self.send(.displayCurrent)
             })

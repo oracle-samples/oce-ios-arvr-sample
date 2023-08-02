@@ -8,7 +8,14 @@ import ARDemoCommon
 /**
  Information parsed from the URL received by the application. Defines the properties required for submitting requests to Oracle Content Management as well as the identifier of the content item to view as a panorama
  */
-public struct PanoramaURLParameters {
+public struct PanoramaURLParameters: Equatable {
+    
+    public static func == (lhs: PanoramaURLParameters, rhs: PanoramaURLParameters) -> Bool {
+        return lhs.demoType == rhs.demoType &&
+        lhs.ocmURL == rhs.ocmURL &&
+        lhs.token == rhs.token &&
+        lhs.assetId == rhs.assetId
+    }
     
     /// The host of the Oracle Content Management server to which requests will be submitted
     var demoType: SupportedDemos

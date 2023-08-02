@@ -12,6 +12,7 @@ import ARPanoramaDemo
 enum ContentViewAction {
     case openURL(URL)
     case reset
+    case showSettings
 }
 
 /**
@@ -23,6 +24,8 @@ enum ContentViewNavigationPathType {
     
     // causes the AR Panorama Demo to be displayed
     case showPanoramaView
+    
+    case showSettings
 }
 
 /**
@@ -83,6 +86,13 @@ class ContentViewModel: ObservableObject {
             self.showMugView = false
             self.showPanoramaView = false
             self.navigationPath.removeAll()
+            
+        case .showSettings:
+            self.showMugView = false
+            self.showPanoramaView = false
+            self.errorMessage = ""
+            self.showError = false
+            self.navigationPath = [.showSettings]
             
         case .openURL(let url):
             

@@ -8,11 +8,15 @@ import ARDemoCommon
 /// View the downloaded mug model and apply the specified coloring, decals and text
 public struct MugView: View {
     @Environment(\.verticalSizeClass) private var verticalSizeClass: UserInterfaceSizeClass?
+    @Environment(\.scenePhase) var scenePhase
     
     @StateObject var model: MugModel
     
+    private var queryItems: [URLQueryItem]?
+    
     public init(queryItems: [URLQueryItem]?, onClose: @escaping () -> Void) {
         _model = StateObject(wrappedValue: MugModel(queryItems: queryItems, onClose: onClose))
+        self.queryItems = queryItems 
     }
     
     public var body: some View {
@@ -41,6 +45,13 @@ public struct MugView: View {
         .navigationBarHidden(true)
         .onAppear {
             self.model.send(.download)
+        }
+        .onChange(of: scenePhase) { newValue in
+            if newValue == .active {
+                if self.model.hasChanged(queryItems: self.queryItems) {
+                    self.model.send(.reset(queryItems))
+                }
+            }
         }
     }
     

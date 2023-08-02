@@ -6,13 +6,11 @@ import Foundation
 /// The collection of 360 degree images associated with a particular location
 class PanoramaExperience {
     var location: String
-    var items = [PanoramaExperienceItem]()
+    var item: PanoramaExperienceItem
     
-    init(location: String, items: [PanoramaExperienceItem]? = nil) {
+    init(location: String, item: PanoramaExperienceItem) {
         self.location = location
-        if let items = items {
-            self.items = items
-        }
+        self.item = item
     }
 }
 

@@ -5,7 +5,18 @@ import Foundation
 import SwiftUI
 import ARDemoCommon
 
-public class MugURLParameters {
+public class MugURLParameters: Equatable {
+    public static func == (lhs: MugURLParameters, rhs: MugURLParameters) -> Bool {
+        return lhs.demoType == rhs.demoType &&
+        lhs.ocmURL == rhs.ocmURL &&
+        lhs.token == rhs.token &&
+        lhs.assetId == rhs.assetId &&
+        lhs.imageId == rhs.imageId &&
+        lhs.mugColor == rhs.mugColor &&
+        lhs.text == rhs.text &&
+        lhs.textColor == rhs.textColor
+    }
+    
     var demoType: SupportedDemos
     var ocmURL: URL
     var token: String

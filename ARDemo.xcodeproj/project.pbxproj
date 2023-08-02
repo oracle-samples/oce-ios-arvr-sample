@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		BA1CC0CD28DCA01500AE0453 /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA1CC0CC28DCA01500AE0453 /* ContentViewModel.swift */; };
 		BA1CC0D128E1E09600AE0453 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BA1CC0D028E1E09600AE0453 /* LaunchScreen.storyboard */; };
+		BA5A86F22A49C26800855C90 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA5A86F12A49C26800855C90 /* SettingsView.swift */; };
 		BA708AAE29B23BDF00A832E2 /* OracleContentTest in Frameworks */ = {isa = PBXBuildFile; productRef = BA708AAD29B23BDF00A832E2 /* OracleContentTest */; };
 		BA708AE829B7785D00A832E2 /* OrientationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA708AE729B7785D00A832E2 /* OrientationView.swift */; };
 		BAA44E5F28E5CED1000AF677 /* ContentViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAA44E5E28E5CED1000AF677 /* ContentViewModelTests.swift */; };
@@ -36,6 +37,7 @@
 /* Begin PBXFileReference section */
 		BA1CC0CC28DCA01500AE0453 /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
 		BA1CC0D028E1E09600AE0453 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		BA5A86F12A49C26800855C90 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		BA708AE729B7785D00A832E2 /* OrientationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationView.swift; sourceTree = "<group>"; };
 		BAA44E5E28E5CED1000AF677 /* ContentViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModelTests.swift; sourceTree = "<group>"; };
 		BAA97E99294A107100381EB0 /* ARMugDemo */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ARMugDemo; path = ARDemo/LocalPackages/ARMugDemo; sourceTree = "<group>"; };
@@ -99,6 +101,7 @@
 				BAB3EC0428B5423F00AC9B54 /* MainView.swift */,
 				BADA86BB28E344280095D37A /* ContentView.swift */,
 				BA1CC0CC28DCA01500AE0453 /* ContentViewModel.swift */,
+				BA5A86F12A49C26800855C90 /* SettingsView.swift */,
 				BA708AE729B7785D00A832E2 /* OrientationView.swift */,
 				BAD7F06529D5E0EB00EF7F21 /* DemoParameters.json */,
 				BAB3EC1128B5563700AC9B54 /* Info.plist */,
@@ -256,6 +259,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA5A86F22A49C26800855C90 /* SettingsView.swift in Sources */,
 				BADA86BC28E344280095D37A /* ContentView.swift in Sources */,
 				BA1CC0CD28DCA01500AE0453 /* ContentViewModel.swift in Sources */,
 				BA708AE829B7785D00A832E2 /* OrientationView.swift in Sources */,
